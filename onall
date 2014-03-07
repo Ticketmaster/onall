@@ -39,7 +39,6 @@ our $bash = 'bash';
 our $fping = 'fping';
 
 our %default = (
-    user        => 'root',
     rate        => 20,
     timeout     => 300,
     delay       => 0,
@@ -98,8 +97,6 @@ $opt{delay} = $default{delay}
     unless (exists $opt{delay} or $opt{delay} =~ m/\d+/);
 $opt{timeout} = $default{timeout}
     unless (exists $opt{timeout} or $opt{timeout} =~ m/\d+/);
-$opt{user} = $default{user}
-    unless (exists $opt{user});
 $opt{syslist} = $default{syslist}
     unless (exists $opt{syslist});
 delete $opt{linenums}
@@ -107,9 +104,13 @@ delete $opt{linenums}
 
 if (exists $opt{help}) { usage('extended'); exit 1; }
 
-our $ssh_args = "-l $opt{user} -xT " 
+our $ssh_args = '-xT ' 
                 . '-o "PasswordAuthentication no" ' 
                 . '-o "StrictHostKeyChecking no" ';
+
+if (exists $opt{'user'}) {
+    $ssh_args .= "-l $opt{user} ";
+}
 
 if (exists $opt{'ssh-quiet'}) {
     $ssh_args .= '-q ';
@@ -620,4 +621,3 @@ Notes:
 EOF
     }
 }
-
